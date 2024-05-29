@@ -5,8 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:vrit_birthday/app/data/service/vrit_api.dart';
 import 'package:vrit_birthday/app/utils/fcm.dart';
+import 'package:vrit_birthday/app/widgets/widgets.dart';
 import 'package:vrit_birthday/photos/data/photos_service.dart';
 import 'package:vrit_birthday/photos/photo_detail_page.dart';
+
+enum Tabs {
+  profile('Profile', Icons.person),
+  home('Home', Icons.home),
+  favorites('Favourites', Icons.favorite);
+
+  const Tabs(this.label, this.icon);
+
+  final String label;
+  final IconData icon;
+}
 
 class PhotosPage extends HookWidget {
   const PhotosPage({super.key});
@@ -15,30 +27,25 @@ class PhotosPage extends HookWidget {
   Widget build(BuildContext context) {
     final activeIndex = useState(1);
 
-    return Scaffold(
+    return VritScaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: activeIndex.value,
         onTap: (i) => activeIndex.value = i,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favourites',
-          ),
+        items: [
+          for (final Tabs(:icon, :label) in Tabs.values)
+            BottomNavigationBarItem(
+              icon: Icon(icon),
+              label: label,
+            ),
         ],
       ),
-      body: switch (activeIndex.value) {
-        0 => const _Profile(),
-        1 => const _Photos(),
-        _ => const _Favourites(),
-      },
+      body: SingleChildScrollView(
+        child: switch (activeIndex.value) {
+          0 => const _Profile(),
+          1 => const _Photos(),
+          _ => const _Favourites(),
+        },
+      ),
     );
   }
 }
@@ -98,19 +105,22 @@ class _Photos extends HookWidget {
     final photosState = useState<List<PhotoModel>>(_photos ?? []);
     final search = useState('');
     final debouncedSearch = useDebounced(
-      search,
+      search.value,
       const Duration(seconds: 2),
     );
 
     useEffect(
       () {
         if (_photos != null) return;
-        PhotosService().getPhotos().then((v) {
+
+        void action(DataOr<SearchPhotosResponseModel> v) {
           v.orSnackbar(
             context,
             (d) => photosState.value = d?.photos ?? [],
           );
-        });
+        }
+
+        PhotosService().getPhotos(debouncedSearch).then(action);
         return null;
       },
       [debouncedSearch],

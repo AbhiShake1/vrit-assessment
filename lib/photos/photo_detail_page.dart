@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:vrit_birthday/app/extensions/extensions.dart';
 import 'package:vrit_birthday/app/utils/set_wallpaper.dart';
+import 'package:vrit_birthday/app/widgets/widgets.dart';
 import 'package:vrit_birthday/photos/data/photos_service.dart';
 
 class PhotoDetailPage extends HookWidget {
@@ -12,7 +13,8 @@ class PhotoDetailPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final PhotoModel(:url) = _photo;
-    return Scaffold(
+    final success = context.snackbar.success;
+    return VritScaffold(
       body: Column(
         children: [
           if (url != null) Image.network(url),
@@ -21,7 +23,10 @@ class PhotoDetailPage extends HookWidget {
             children: [
               LikeButton(_photo),
               InkWell(
-                onTap: () => setWallpaper(url),
+                onTap: () async {
+                  await setWallpaper(url);
+                  success('Wallpaper set');
+                },
                 child: const Text('Set as wallpeper'),
               ),
             ],

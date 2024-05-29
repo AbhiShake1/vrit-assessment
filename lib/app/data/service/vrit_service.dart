@@ -31,7 +31,7 @@ extension TryOrFutureNull<T> on Future<T> Function() {
     try {
       return this();
     } catch (_) {
-      return null;
+      return Future.value();
     }
   }
 }

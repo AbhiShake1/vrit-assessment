@@ -14,7 +14,12 @@ class PhotosService extends VritService {
   late final getPhotos = ([
     String? search,
   ]) async {
-    final (photos, :err) = await api.get('search?query=$search');
+    final (photos, :err) = await api.get(
+      'search',
+      query: {
+        'query': search ?? 'People',
+      },
+    );
     return (photos.parse(SearchPhotosResponseModel.fromJson), err: err);
   };
 
@@ -34,25 +39,23 @@ class PhotosService extends VritService {
   }
 
   // ignore: prefer_function_declarations_over_variables
-  late final likePhoto = (PhotoModel photo) {
-    () async {
-      final doc = FirebaseCollection.users.doc(currentUserId);
+  late final likePhoto = (PhotoModel photo) => () async {
+        final doc = FirebaseCollection.users.doc(currentUserId);
 
-      final prev = await FirebaseCollection.users.doc(currentUserId).get();
+        final prev = await FirebaseCollection.users.doc(currentUserId).get();
 
-      final prevPhotos =
-          (prev['likedPhotos'] as List<dynamic>).cast<Map<String, dynamic>>();
+        final prevPhotos =
+            (prev['likedPhotos'] as List<dynamic>).cast<Map<String, dynamic>>();
 
-      await doc.set(
-        {
-          'likedPhotos': [...prevPhotos, photo.toJson()],
-        },
-        SetOptions(
-          merge: true,
-        ),
-      );
-    }.tryOrNull();
-  };
+        await doc.set(
+          {
+            'likedPhotos': [...prevPhotos, photo.toJson()],
+          },
+          SetOptions(
+            merge: true,
+          ),
+        );
+      }.tryOrNull();
 }
 
 class SearchPhotosResponseModel {
@@ -81,7 +84,7 @@ class PhotoModel {
   });
   factory PhotoModel.fromJson(Map<String, dynamic> json) {
     return PhotoModel(
-      url: json['url']?.toString(),
+      url: json['src']?['original']?.toString(),
       id: int.tryParse(json['id']?.toString() ?? '0'),
       width: int.tryParse(json['width']?.toString() ?? '0'),
       height: int.tryParse(json['height']?.toString() ?? '0'),

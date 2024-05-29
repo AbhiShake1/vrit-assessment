@@ -1,10 +1,16 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
 import 'package:vrit_birthday/app/extensions/extensions.dart';
 
 typedef DataOr<T> = (T? data, {Exception? err});
+
+final _dio = Dio();
+
+const _authHeaders = {
+  'Authorization': 'Mxlbg60S6hI1eUlPvXQABPi4ycvOFihxBxGOfDWRYwiu8fXaFeLA9YC4',
+};
 
 class VritApi {
   factory VritApi() => _instance ??= const VritApi._();
@@ -12,17 +18,25 @@ class VritApi {
   static VritApi? _instance;
 
   Future<DataOr<Map<String, dynamic>>> get(
-    String path,
-  ) async {
+    String path, {
+    Map<String, dynamic> query = const {},
+  }) async {
     Map<String, dynamic>? data;
     Exception? err;
-    final httpRes = await http.get(
-      Uri.parse('https://api.pixels.com/v1/$path'),
+    final httpRes = await _dio.get<Map<String, dynamic>>(
+      'https://api.pexels.com/v1/$path',
+      queryParameters: {
+        for (final MapEntry(:key, :value) in query.entries)
+          if (value != null) key: value,
+      },
+      options: Options(
+        headers: _authHeaders,
+      ),
     );
     if (httpRes.statusCode == 200) {
-      data = jsonDecode(httpRes.body) as Map<String, dynamic>;
+      data = httpRes.data;
     } else {
-      err = Exception(httpRes.body);
+      err = Exception(httpRes.data);
     }
     return (data, err: err);
   }
