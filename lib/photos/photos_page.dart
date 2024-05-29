@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:vrit_birthday/app/extensions/snackbar_extension.dart';
 import 'package:vrit_birthday/app/utils/fcm.dart';
 import 'package:vrit_birthday/photos/data/photos_service.dart';
 import 'package:vrit_birthday/photos/photo_detail_page.dart';
@@ -66,17 +67,14 @@ class _Favourites extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final photos = useState<List<PhotoModel>?>(null);
+    final showError = context.snackbar.error;
 
     useEffect(
       () {
         PhotosService().getLikedPhotos().then((p) {
           p.fold(
             (d) => photos.value = d.photos,
-            (e) => ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(e.toString()),
-              ),
-            ),
+            showError,
           );
         });
         return null;
@@ -101,15 +99,16 @@ class _Photos extends HookWidget {
       const Duration(seconds: 2),
     );
 
+    // stale context isnt used due to async gaps
+    final showError = context.snackbar.error;
+
     useEffect(
       () {
         if (_photos != null) return;
         PhotosService().getPhotos().then((v) {
           v.fold(
             (d) => photosState.value = d.photos,
-            (err) => ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(err.toString())),
-            ),
+            showError,
           );
         });
         return null;
