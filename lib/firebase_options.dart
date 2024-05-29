@@ -25,12 +25,12 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
-      case TargetPlatform.windows:
         throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
+          'DefaultFirebaseOptions have not been configured for macos - '
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
+      case TargetPlatform.windows:
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -44,37 +44,38 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCo6Y4jdj0DM_4eiM3NwZTf12FEv-bWUS0',
-    appId: '1:1028615433437:web:979f46ab3ddd8fae877f34',
-    messagingSenderId: '1028615433437',
-    projectId: 'vrinter',
-    authDomain: 'vrinter.firebaseapp.com',
-    storageBucket: 'vrinter.appspot.com',
+    apiKey: 'AIzaSyBupIlZijerUypomAJ3SSPHXgJatQtgzus',
+    appId: '1:517279909339:web:37b102e04427f57adcd3fe',
+    messagingSenderId: '517279909339',
+    projectId: 'vritphotos',
+    authDomain: 'vritphotos.firebaseapp.com',
+    storageBucket: 'vritphotos.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCmlsqgacZsqyefVpBOX8vhF7pACFby80g',
-    appId: '1:1028615433437:android:97687466e71eb241877f34',
-    messagingSenderId: '1028615433437',
-    projectId: 'vrinter',
-    storageBucket: 'vrinter.appspot.com',
+    apiKey: 'AIzaSyBDI8Ir6ZttqR7ffv3RNFATB9IHU00NAMQ',
+    appId: '1:517279909339:android:c156e1477c9407bddcd3fe',
+    messagingSenderId: '517279909339',
+    projectId: 'vritphotos',
+    storageBucket: 'vritphotos.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAPOgGG3PiHn651OvL8ah_MthedsTR1l_g',
-    appId: '1:1028615433437:ios:bc7b09c42ee659fe877f34',
-    messagingSenderId: '1028615433437',
-    projectId: 'vrinter',
-    storageBucket: 'vrinter.appspot.com',
+    apiKey: 'AIzaSyAVKtTFVJg1zjoxSo8HIgoA8Yn72R6WPbw',
+    appId: '1:517279909339:ios:2b8a572e689e6c4cdcd3fe',
+    messagingSenderId: '517279909339',
+    projectId: 'vritphotos',
+    storageBucket: 'vritphotos.appspot.com',
     iosBundleId: 'com.vrit.vrit-birthday',
   );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAPOgGG3PiHn651OvL8ah_MthedsTR1l_g',
-    appId: '1:1028615433437:ios:127d3eaceae800a8877f34',
-    messagingSenderId: '1028615433437',
-    projectId: 'vrinter',
-    storageBucket: 'vrinter.appspot.com',
-    iosBundleId: 'com.vrit.app',
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyBupIlZijerUypomAJ3SSPHXgJatQtgzus',
+    appId: '1:517279909339:web:ff4a82b24ecb1c79dcd3fe',
+    messagingSenderId: '517279909339',
+    projectId: 'vritphotos',
+    authDomain: 'vritphotos.firebaseapp.com',
+    storageBucket: 'vritphotos.appspot.com',
   );
+
 }

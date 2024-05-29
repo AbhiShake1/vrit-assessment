@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:vrit_birthday/app/widgets/widgets.dart';
 import 'package:vrit_birthday/login/auth_utils.dart';
 
 class LoginPage extends HookWidget {
@@ -40,43 +41,71 @@ class LoginPage extends HookWidget {
       [user],
     );
 
-    return Scaffold(
+    return VritScaffold(
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Material(
-            color: Colors.grey,
-            borderRadius: BorderRadius.circular(6),
-            child: const InkWell(
-              onTap: signInWithGoogle,
-              child: Row(
-                children: [
-                  Text('Sign in with google'),
-                  SizedBox(
-                    width: 6,
-                  ),
-                  Icon(Icons.verified_user),
-                ],
-              ),
-            ),
+          Text(
+            'Welcome to Vrit Photos',
+            style: Theme.of(context).textTheme.headlineLarge,
+          ),
+          const SizedBox(
+            height: 6,
+          ),
+          const _LoginButton(
+            onTap: signInWithGoogle,
+            text: 'Sign in with google',
+            icon: Icons.aod,
           ),
           if (!kIsWeb && Platform.isIOS)
-            Material(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(6),
-              child: const InkWell(
-                onTap: signInWithApple,
-                child: Row(
-                  children: [
-                    Text('Sign in with apple'),
-                    SizedBox(
-                      width: 6,
-                    ),
-                    Icon(Icons.verified_user),
-                  ],
-                ),
-              ),
+            const _LoginButton(
+              onTap: signInWithApple,
+              text: 'Sign in with apple',
+              icon: Icons.apple,
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _LoginButton extends StatelessWidget {
+  const _LoginButton({
+    required this.onTap,
+    required this.text,
+    required this.icon,
+  });
+
+  final VoidCallback onTap;
+  final String text;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      padding: const EdgeInsets.symmetric(
+        vertical: 16,
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon),
+            const SizedBox(
+              width: 6,
+            ),
+            Text(
+              text,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ],
+        ),
       ),
     );
   }

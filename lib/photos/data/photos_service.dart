@@ -1,79 +1,59 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
+import 'package:vrit_birthday/app/data/service/api_stores.dart';
+import 'package:vrit_birthday/app/data/service/vrit_api.dart';
+import 'package:vrit_birthday/app/data/service/vrit_service.dart';
 
-class PhotosService {
-  factory PhotosService() => _instance ??= PhotosService();
+class PhotosService extends VritService {
+  factory PhotosService() => _instance ??= PhotosService._();
+
+  PhotosService._();
   static PhotosService? _instance;
 
-  Future<Either<SearchPhotosResponseModel, Exception>> getPhotos([
+  // ignore: prefer_function_declarations_over_variables
+  late final getPhotos = ([
     String? search,
   ]) async {
-    final res = await http.get(
-      Uri.parse('https://api.pexels.com/v1/search?query=$search'),
-    );
+    final (photos, :err) = await api.get('search?query=$search');
+    return (photos.parse(SearchPhotosResponseModel.fromJson), err: err);
+  };
 
-    if (res.statusCode != 200) {
-      return Right(Exception(res.body));
-    }
+  // ignore: prefer_function_declarations_over_variables
+  late final getLikedPhotos = () async {
+    final res = await FirebaseCollection.users.doc(currentUserId).get();
 
-    final body = jsonDecode(res.body) as Map<String, dynamic>;
-
-    final photos = SearchPhotosResponseModel.fromJson(body);
-
-    return Left(photos);
-  }
-
-  Future<Either<SearchPhotosResponseModel, Exception>> getLikedPhotos([
-    String? search,
-  ]) async {
-    final userId = FirebaseAuth.instance.currentUser!.email;
-    final collection = FirebaseFirestore.instance.collection('users');
-
-    final res = await collection.doc(userId).get();
-
-    return Left(
-      SearchPhotosResponseModel.fromJson({
-        'photos': res.data()?['likedPhotos'],
-      }),
-    );
-  }
+    return SearchPhotosResponseModel.fromJson({
+      'photos': res.data()?['likedPhotos'],
+    });
+  };
 
   Future<bool> checkIfLiked(PhotoModel photo) async {
-    final liked = await getLikedPhotos();
+    final liked = await getLikedPhotos.tryOrNull();
 
-    if (liked.isRight()) return false;
-
-    return liked.fold(
-      (d) => d.photos.contains(photo),
-      (_) => false,
-    );
+    return liked?.photos.contains(photo) ?? false;
   }
 
-  Future<Either<void, Exception>> likePhoto(PhotoModel photo) async {
-    try {
-      final userId = FirebaseAuth.instance.currentUser!.email;
-      final collection = FirebaseFirestore.instance.collection('users');
+  // ignore: prefer_function_declarations_over_variables
+  late final likePhoto = (PhotoModel photo) {
+    () async {
+      final doc = FirebaseCollection.users.doc(currentUserId);
 
-      final prev = await collection.get();
+      final prev = await FirebaseCollection.users.doc(currentUserId).get();
 
-      await collection.doc(userId).set(
+      final prevPhotos =
+          (prev['likedPhotos'] as List<dynamic>).cast<Map<String, dynamic>>();
+
+      await doc.set(
         {
-          'likedPhotos': [...prev.docs, photo.toJson()],
+          'likedPhotos': [...prevPhotos, photo.toJson()],
         },
         SetOptions(
           merge: true,
         ),
-      ); // Using merge option to update only the specified fields
-
-      return const Left(null);
-    } catch (e) {
-      return Right(Exception(e.toString()));
-    }
-  }
+      );
+    }.tryOrNull();
+  };
 }
 
 class SearchPhotosResponseModel {
@@ -92,8 +72,9 @@ class SearchPhotosResponseModel {
   final List<PhotoModel> photos;
 }
 
+@immutable
 class PhotoModel {
-  PhotoModel({
+  const PhotoModel({
     required this.url,
     required this.id,
     required this.width,
@@ -113,6 +94,17 @@ class PhotoModel {
 
   final int? width;
   final int? height;
+
+  @override
+  bool operator ==(Object other) =>
+      other is PhotoModel &&
+      other.url == url &&
+      other.height == height &&
+      other.id == id &&
+      other.width == width;
+
+  @override
+  int get hashCode => Object.hashAll([url, id, width, height]);
 
   Map<String, dynamic> toJson() => {
         'url': url,

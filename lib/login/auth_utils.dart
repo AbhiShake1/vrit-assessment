@@ -9,6 +9,8 @@ Future<UserCredential?> signInWithGoogle() async {
 
   if (user == null) return null;
 
+  print(user);
+
   final GoogleSignInAuthentication(:accessToken, :idToken) =
       await user.authentication;
 

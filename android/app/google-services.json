@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "517279909339",
+    "project_id": "vritphotos",
+    "storage_bucket": "vritphotos.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517279909339:android:c156e1477c9407bddcd3fe",
+        "android_client_info": {
+          "package_name": "com.vrit.vrit_birthday"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDI8Ir6ZttqR7ffv3RNFATB9IHU00NAMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
