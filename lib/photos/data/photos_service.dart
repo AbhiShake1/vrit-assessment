@@ -42,6 +42,17 @@ class PhotosService {
     );
   }
 
+  Future<bool> checkIfLiked(PhotoModel photo) async {
+    final liked = await getLikedPhotos();
+
+    if (liked.isRight()) return false;
+
+    return liked.fold(
+      (d) => d.photos.contains(photo),
+      (_) => false,
+    );
+  }
+
   Future<Either<void, Exception>> likePhoto(PhotoModel photo) async {
     try {
       final userId = FirebaseAuth.instance.currentUser!.email;

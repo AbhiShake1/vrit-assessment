@@ -42,6 +42,14 @@ class LikeButton extends HookWidget {
   Widget build(BuildContext context) {
     final liked = useState(false);
 
+    useEffect(() {
+      PhotosService().checkIfLiked(_photo).then((l) {
+        // wont rebuild if it was already true
+        if (l) liked.value = true;
+      });
+      return null;
+    });
+
     final showErr = context.snackbar.error;
 
     return InkWell(
