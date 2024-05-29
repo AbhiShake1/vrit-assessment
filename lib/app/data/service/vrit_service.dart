@@ -25,3 +25,13 @@ extension TryOrNull<T> on T Function() {
     }
   }
 }
+
+extension TryOrFutureNull<T> on Future<T> Function() {
+  Future<T>? tryOrNull() {
+    try {
+      return this();
+    } catch (_) {
+      return null;
+    }
+  }
+}

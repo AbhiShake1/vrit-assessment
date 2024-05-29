@@ -3,7 +3,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:vrit_birthday/app/extensions/extensions.dart';
 import 'package:vrit_birthday/app/utils/set_wallpaper.dart';
 import 'package:vrit_birthday/photos/data/photos_service.dart';
-import 'package:vrit_birthday/photos/photos_page.dart';
 
 class PhotoDetailPage extends HookWidget {
   const PhotoDetailPage(this._photo, {super.key});

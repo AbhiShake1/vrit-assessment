@@ -43,7 +43,7 @@ extension DataOrSnackbarX<T> on DataOr<T> {
   ) {
     final (d, :err) = this;
     if (err != null) {
-      context.snackbar.error(err);
+      context.snackbar.error(err.toString());
     }
 
     return fn(d);

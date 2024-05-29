@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:vrit_birthday/app/data/service/api_stores.dart';
 import 'package:vrit_birthday/app/data/service/vrit_api.dart';
